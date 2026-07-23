@@ -1,0 +1,10 @@
+# Allowlist for intentional dummy credentials in test/example assets.
+# This is a governance toolkit: fixtures and examples embed fake secrets
+# (sk-abc123xyz, sample JWTs) on purpose to exercise the detectors.
+[allowlist]
+description = "Test fixtures and examples with intentional dummy credentials"
+paths = [
+  '''(^|/)fixtures?/''',
+  '''(^|/)tests?/''',
+  '''policy-engine/examples/''',
+]
