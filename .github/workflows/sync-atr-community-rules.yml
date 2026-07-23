@@ -57,7 +57,9 @@ jobs:
         id: atr
         run: |
           set -euo pipefail
-          npm install --no-save --no-package-lock agent-threat-rules@2.0.12 --silent
+          # @latest, not a pinned version — a pin here (former 2.0.12) made every
+          # weekly run regenerate the SAME content and stack identical PRs.
+          npm install --no-save --no-package-lock agent-threat-rules@latest --silent
           ATR_VERSION=$(node -p "require('./node_modules/agent-threat-rules/package.json').version")
           echo "version=$ATR_VERSION" >> "$GITHUB_OUTPUT"
           echo "Pulled agent-threat-rules@$ATR_VERSION"
@@ -98,13 +100,21 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          BRANCH="bot/sync-atr-${{ steps.atr.outputs.version }}-${{ github.run_id }}"
+          # Stable branch name (no run_id): re-runs force-push the SAME branch so
+          # an open sync PR gets updated in place instead of stacking duplicates
+          # (2026-07-24: eight identical PRs had accumulated since June).
+          BRANCH="bot/sync-atr-community-rules"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -b "$BRANCH"
+          git checkout -B "$BRANCH"
           git add examples/atr-community-rules/atr_community_policy_full.yaml
           git commit -m "chore(examples/atr-community-rules): sync ATR v${{ steps.atr.outputs.version }}"
-          git push -u origin "$BRANCH"
+          git push -f -u origin "$BRANCH"
+
+          if [ -n "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
+            echo "Open sync PR already exists — updated in place by the force-push."
+            exit 0
+          fi
 
           BODY="Automated weekly sync of the ATR community detection-rule corpus.
 
