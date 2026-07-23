@@ -39,6 +39,12 @@ REGISTERED_PACKAGES = {
     "agentmesh-runtime", "agentmesh_runtime",
     "agent-sre", "agent_sre",
     "agent-governance-toolkit", "agent_governance_toolkit",
+    # v4.0.0 consolidated distributions — Microsoft-published on PyPI
+    # (ownership verified 2026-07-24: agentgovtoolkit@microsoft.com, v4.1.0)
+    "agent-governance-toolkit-core", "agent_governance_toolkit_core",
+    "agent-governance-toolkit-cli", "agent_governance_toolkit_cli",
+    "agent-governance-toolkit-integrations", "agent_governance_toolkit_integrations",
+    "agent-governance-toolkit-protocols", "agent_governance_toolkit_protocols",
     "agentmesh-lightning", "agentmesh_lightning",
     "agentmesh-marketplace", "agentmesh_marketplace",
     "agent-discovery", "agent_discovery",
