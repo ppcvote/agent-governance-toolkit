@@ -29,9 +29,11 @@ jobs:
         run: |
           echo "Collecting repository metrics..."
 
-          # Open issues and PRs
-          OPEN_ISSUES=$(gh issue list --state open --json number --jq 'length')
-          OPEN_PRS=$(gh pr list --state open --json number --jq 'length')
+          # Open issues and PRs. Issues are DISABLED on this repo, so gh exits 1
+          # ("repository has disabled issues") — with bash -e that killed the whole
+          # job weekly. Same fallback the later queries already use.
+          OPEN_ISSUES=$(gh issue list --state open --json number --jq 'length' 2>/dev/null || echo "0")
+          OPEN_PRS=$(gh pr list --state open --json number --jq 'length' 2>/dev/null || echo "0")
 
           # Stale issues (no activity in 30 days)
           STALE=$(gh issue list --state open --json number,updatedAt \
